@@ -1,0 +1,8 @@
+http/proxmox/linux/ubuntu/20.04/user-data
+http/vmware/linux/ubuntu/20.04/user-data
+image-configs/*
+!image-configs/template-proxmox.pkrvars.hcl
+!image-configs/template-proxmox.shvars
+!image-configs/template-vmware.pkrvars.hcl
+!image-configs/template-vmware.shvars
+.DS_Store
