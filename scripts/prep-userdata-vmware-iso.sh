@@ -6,8 +6,8 @@ autoinstall:
   version: 1
   locale: en_US
   keyboard:
-    layout: en
-    variant: us
+    layout: be
+    variant: be
   network:
     network:
       version: 2
