@@ -6,3 +6,5 @@ image-configs/*
 !image-configs/template-vmware.pkrvars.hcl
 !image-configs/template-vmware.shvars
 .DS_Store
+output-vmware
+packer_cache

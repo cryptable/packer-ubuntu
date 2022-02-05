@@ -27,7 +27,7 @@ Don't use the default .shvars-file, because it is just an example. It is better 
 
 TODO
 ----
-- Testing on VMWare
+- Add vagrant-box support
 
 Notes
 -----

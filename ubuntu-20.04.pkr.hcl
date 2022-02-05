@@ -204,6 +204,7 @@ source "file" "proxmox" {
 
 build {
   sources = [
+    "source.vmware-iso.ubuntu",
     "source.proxmox-iso.ubuntu"
   ]
 
