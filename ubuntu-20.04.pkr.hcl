@@ -93,12 +93,25 @@ variable "password" {
 
 variable "hostname" {
   type    = string
-  default = "ejbca"
+  default = "ubuntu"
 }
 
 variable "salt" {
   type    = string
   default = "0A1675EF"
+}
+
+# Vagrant Section
+# ---------------
+
+variable "vagrant_token" {
+  type    = string
+  default = "<Atlas token>"
+}
+
+variable "vagrant_version" {
+  type    = string
+  default = "0.0.0"
 }
 
 # VMWARE image section
@@ -193,19 +206,19 @@ source "proxmox-iso" "ubuntu" {
     storage_pool_type = "lvm-thin"
     format = "raw"
   }
-  template_name = "ubuntu2004"
-  template_description = "Ubuntu 20.04 template to build ubuntu server"
+  template_name = "ubuntu-template"
+  template_description = "Ubuntu 20.04 template to build Ubuntu server"
 }
 
-source "file" "proxmox" {
-  source = "./image-configs/user-data"
-  target = "./http/proxmox/linux/ubuntu/20.04/user-data"
-} 
+source "null" "vagrant" {
+  communicator = "none"
+}
 
 build {
   sources = [
     "source.vmware-iso.ubuntu",
-    "source.proxmox-iso.ubuntu"
+    "source.proxmox-iso.ubuntu",
+    "source.null.vagrant"
   ]
 
   provisioner "shell" {
@@ -215,5 +228,56 @@ build {
       "./scripts/cleanup.sh",
       "./scripts/harden.sh",
     ]
+    only = [ 
+      "vmware-iso.ubuntu", 
+      "proxmox-iso.ubuntu" 
+    ]
   }
+
+  post-processors {  
+    post-processor "artifice" {
+      files = [
+        "output-vmware/disk-s001.vmdk",
+        "output-vmware/disk-s002.vmdk",
+        "output-vmware/disk-s003.vmdk",
+        "output-vmware/disk.vmdk",
+        "output-vmware/ubuntu-template.nvram",
+        "output-vmware/ubuntu-template.vmsd",
+        "output-vmware/ubuntu-template.vmx",
+        "output-vmware/ubuntu-template.vmxf"
+      ]
+      only = [ 
+        "vmware-iso.ubuntu", 
+        "null.vagrant" 
+      ]
+    }
+    post-processor "vagrant" {
+      keep_input_artifact = true
+      provider_override   = "vmware"
+      output = "output-vmware/packer_ubuntu_vmware.box"
+      only = [ 
+        "vmware-iso.ubuntu", 
+        "null.vagrant" 
+      ]
+    }
+  }
+  post-processors {  
+    post-processor "artifice" {
+      files = [
+        "output-vmware/packer_ubuntu_vmware.box"
+      ]
+      only = [ 
+        "null.vagrant"
+      ]
+    }
+    post-processor "vagrant-cloud" {
+      access_token = "${var.vagrant_token}"
+      box_tag      = "cryptable/ubuntu2004"
+      version      = "${var.vagrant_version}"
+      version_description = "Empty Ubuntu 20.04 Linux"
+      only = [ 
+        "null.vagrant"
+      ]
+    }
+  } 
 }

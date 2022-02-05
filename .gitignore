@@ -5,6 +5,8 @@ image-configs/*
 !image-configs/template-proxmox.shvars
 !image-configs/template-vmware.pkrvars.hcl
 !image-configs/template-vmware.shvars
+!image-configs/template-vagrant.pkrvars.hcl
+!image-configs/template-vagrant.shvars
 .DS_Store
 output-vmware
 packer_cache
