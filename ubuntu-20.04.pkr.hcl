@@ -185,6 +185,7 @@ source "proxmox-iso" "ubuntu" {
     model = "e1000"
     bridge = "vmbr0"
   }
+  scsi_controller = "virtio-scsi-pci"
   disks {
     type = "scsi"
     disk_size  = "${var.disk_size}"
